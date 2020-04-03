@@ -3,11 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hermes.Abstractions {
-    public delegate void MessageReceived<T>(IChannel channel, T message);
+    public delegate void MessageReceived<TKey, TValue>(IChannel channel, IMessage<TKey, TValue> message);
 
-    public interface IConsumer<T> {
-        event MessageReceived<T> OnMessageReceived;
+    public interface IConsumer<TKey, TValue> {
+        event MessageReceived<TKey, TValue> OnMessageReceived;
 
-        Task ConsumeAsync(IChannelReader channelReader, CancellationToken cancellationToken = default);
+        Task ConsumeAsync(CancellationToken cancellationToken = default);
     }
 }

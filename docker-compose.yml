@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  hermes.messagequeue.service:
+    image: ${DOCKER_REGISTRY-}hermesmessagequeueservice
+    build:
+      context: ./src/Hermes.MessageQueue.Service
+      dockerfile: Dockerfile

@@ -18,40 +18,47 @@ namespace Hermes.Client {
                     .AddFilter("Hermes.Client.Program", LogLevel.Debug)
                     .AddConsole();
             });
-            var logger = loggerFactory.CreateLogger("client");
 
-            var connectionFactory = new DefaultHermesConnectionFactory(logger);
+            var logger = loggerFactory.CreateLogger("client");
             var adapter = new DefaultMessageAdapter();
 
-            await CreateConsumer(connectionFactory, adapter, logger);
-            await CreateProducer(connectionFactory, adapter, logger);
+            var connection = await CreateConsumer(adapter, logger);
+            await CreateProducer(adapter, logger);
+
+            connection.Dispose();
         }
 
-        public async static Task CreateProducer(IConnectionFactory connectionFactory, IMessageAdapter adapter, ILogger logger) {
+        public async static Task CreateProducer(IMessageAdapter adapter, ILogger logger) {
+            var connectionFactory = new DefaultHermesConnectionFactory(logger);
+
             var connection = await connectionFactory.ConnectAsync("127.0.0.1", 8087);
-            var channelWriter = connection.GetOrCreateOutputChannel("client output channel");
+            var channel    = connection.GetOrCreateOutputChannel("client channel");
+            var producer   = new DefaultHermesProducer<Guid, Payload>(channel, adapter, logger);
 
-            var producer = new DefaultHermesProducer<Payload>(adapter, logger);
-
-            while (true) {
+            while (Console.ReadKey().Key != ConsoleKey.Escape) {
                 var payload = new Payload { Data = Console.ReadLine() };
-                await producer.ProduceAsync(channelWriter, payload);
+                await producer.ProduceAsync(Guid.NewGuid(), payload);
 
                 Console.WriteLine();
             }
+
+            connection.Dispose();
         }
 
-        public async static Task CreateConsumer(IConnectionFactory connectionFactory, IMessageAdapter adapter, ILogger logger) {
-            var connection = await connectionFactory.ConnectAsync("127.0.0.1", 8087);
-            var channelWriter = connection.GetOrCreateInputChannel("client input channel");
+        public async static Task<IConnection> CreateConsumer(IMessageAdapter adapter, ILogger logger) {
+            var connectionFactory = new DefaultHermesConnectionFactory(logger);
 
-            var consumer = new DefaultHermesConsumer<Payload>(adapter, logger);
+            var connection = await connectionFactory.ConnectAsync("127.0.0.1", 8087);
+            var channel    = connection.GetOrCreateInputChannel("client channel");
+            var consumer   = new DefaultHermesConsumer<Guid, Payload>(channel, adapter, logger);
 
             consumer.OnMessageReceived += (channel, message) => {
-                Console.WriteLine($"broadcasting message received {message.Data}");
+                Console.WriteLine($"broadcasting message(key: {message.Key}) received {message.Value.Data}");
             };
 
-            _ = consumer.ConsumeAsync(channelWriter);
+            _ = consumer.ConsumeAsync();
+
+            return connection;
         }
     }
 

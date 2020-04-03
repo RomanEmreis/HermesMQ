@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 
 namespace Hermes.Abstractions {
-    public interface IProducer<T> {
-        Task ProduceAsync(IChannelWriter channelWriter, T payload, CancellationToken cancellationToken = default);
+    public interface IProducer<TKey, TValue> {
+        Task ProduceAsync(TKey key, TValue value, CancellationToken cancellationToken = default);
     }
 }

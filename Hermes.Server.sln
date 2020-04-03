@@ -3,21 +3,28 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hermes.Server", "src\Hermes.Server\Hermes.Server.csproj", "{51480D38-98BC-4AC9-AC07-87DE119A9EFA}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{56C4A96D-EC27-45F5-A789-9B517B7D3FBE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C4361DA0-A548-4122-BB27-B81672913E29}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{92E7A1B7-10C8-4849-A9D5-9D8CC16476AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Client", "samples\Hermes.Client\Hermes.Client.csproj", "{1770C117-2509-4538-84A2-B602F6D335CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hermes.Client", "samples\Hermes.Client\Hermes.Client.csproj", "{1770C117-2509-4538-84A2-B602F6D335CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Abstractions", "src\Hermes.Abstractions\Hermes.Abstractions.csproj", "{86498E41-CC8E-423E-82AD-52DE111D2115}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hermes.Abstractions", "src\Hermes.Abstractions\Hermes.Abstractions.csproj", "{86498E41-CC8E-423E-82AD-52DE111D2115}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Infrastructure", "src\Hermes.Infrastructure\Hermes.Infrastructure.csproj", "{F06E6A93-94C6-453A-9FD0-A478EFF23850}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hermes.Infrastructure", "src\Hermes.Infrastructure\Hermes.Infrastructure.csproj", "{F06E6A93-94C6-453A-9FD0-A478EFF23850}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HermesMQ", "src\HermesMQ\HermesMQ.csproj", "{0CFE84E4-D6A4-4CEE-A68E-E4FBD0E480C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HermesMQ", "src\HermesMQ\HermesMQ.csproj", "{0CFE84E4-D6A4-4CEE-A68E-E4FBD0E480C8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hermes.MessageQueue.Service", "src\Hermes.MessageQueue.Service\Hermes.MessageQueue.Service.csproj", "{134BA234-789C-42B4-95E7-B682B23F654D}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{13AB9E7C-795D-46A7-A69E-72081BA11EDD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BA3233FE-6CAC-42DB-B1FE-841B6C71A8F3}"
+	ProjectSection(SolutionItems) = preProject
+		.env = .env
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +32,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{51480D38-98BC-4AC9-AC07-87DE119A9EFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{51480D38-98BC-4AC9-AC07-87DE119A9EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{51480D38-98BC-4AC9-AC07-87DE119A9EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{51480D38-98BC-4AC9-AC07-87DE119A9EFA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1770C117-2509-4538-84A2-B602F6D335CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1770C117-2509-4538-84A2-B602F6D335CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1770C117-2509-4538-84A2-B602F6D335CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,16 +48,24 @@ Global
 		{0CFE84E4-D6A4-4CEE-A68E-E4FBD0E480C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CFE84E4-D6A4-4CEE-A68E-E4FBD0E480C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CFE84E4-D6A4-4CEE-A68E-E4FBD0E480C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{134BA234-789C-42B4-95E7-B682B23F654D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{134BA234-789C-42B4-95E7-B682B23F654D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{134BA234-789C-42B4-95E7-B682B23F654D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{134BA234-789C-42B4-95E7-B682B23F654D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13AB9E7C-795D-46A7-A69E-72081BA11EDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13AB9E7C-795D-46A7-A69E-72081BA11EDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13AB9E7C-795D-46A7-A69E-72081BA11EDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13AB9E7C-795D-46A7-A69E-72081BA11EDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{51480D38-98BC-4AC9-AC07-87DE119A9EFA} = {56C4A96D-EC27-45F5-A789-9B517B7D3FBE}
 		{1770C117-2509-4538-84A2-B602F6D335CC} = {92E7A1B7-10C8-4849-A9D5-9D8CC16476AC}
 		{86498E41-CC8E-423E-82AD-52DE111D2115} = {56C4A96D-EC27-45F5-A789-9B517B7D3FBE}
 		{F06E6A93-94C6-453A-9FD0-A478EFF23850} = {56C4A96D-EC27-45F5-A789-9B517B7D3FBE}
 		{0CFE84E4-D6A4-4CEE-A68E-E4FBD0E480C8} = {56C4A96D-EC27-45F5-A789-9B517B7D3FBE}
+		{134BA234-789C-42B4-95E7-B682B23F654D} = {56C4A96D-EC27-45F5-A789-9B517B7D3FBE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {591D1330-4279-465F-BF80-1340C661A8AF}

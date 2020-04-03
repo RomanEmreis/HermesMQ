@@ -1,28 +1,38 @@
 ﻿using Hermes.Abstractions;
+using Hermes.Infrastructure.Extensions;
+using System;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 
 namespace Hermes.Infrastructure.Connection {
     public sealed class DefaultHermesConnection : IConnection {
-        private readonly ConcurrentDictionary<string, IChannel> _existingChannels = 
-            new ConcurrentDictionary<string, IChannel>();
+        private readonly Lazy<ConcurrentDictionary<string, IDuplexChannel>> _existingDuplexChannels = 
+            new Lazy<ConcurrentDictionary<string, IDuplexChannel>>(() => new ConcurrentDictionary<string, IDuplexChannel>(), true);
 
-        private readonly Socket                                 _socket;
+        private readonly Lazy<ConcurrentDictionary<string, IChannelReader>> _existingInputChannels =
+            new Lazy<ConcurrentDictionary<string, IChannelReader>>(() => new ConcurrentDictionary<string, IChannelReader>(), true);
+
+        private readonly Lazy<ConcurrentDictionary<string, IChannelWriter>> _existingOutputChannels =
+            new Lazy<ConcurrentDictionary<string, IChannelWriter>>(() => new ConcurrentDictionary<string, IChannelWriter>(), true);
+
+        private readonly Socket                                       _socket;
 
         public DefaultHermesConnection(Socket socket) => _socket = socket;
 
+        public bool IsConnected => _socket.IsConnected();
+
         public IDuplexChannel GetOrCreateDuplexChannel(string channelName) =>
-            (IDuplexChannel)_existingChannels.GetOrAdd(
+            _existingDuplexChannels.Value.GetOrAdd(
                 channelName,
                 name => CreateChannel(name));
 
-        private IChannel CreateChannel(string channelName) {
+        private IDuplexChannel CreateChannel(string channelName) {
             var networkStream = new NetworkStream(_socket);
             return new DuplexHermesChannel(channelName, networkStream);
         }
 
         public IChannelReader GetOrCreateInputChannel(string channelName) =>
-            (IChannelReader) _existingChannels.GetOrAdd(
+            _existingInputChannels.Value.GetOrAdd(
                 channelName,
                 name => CreateInputChannel(name));
 
@@ -32,7 +42,7 @@ namespace Hermes.Infrastructure.Connection {
         }
 
         public IChannelWriter GetOrCreateOutputChannel(string channelName) =>
-            (IChannelWriter) _existingChannels.GetOrAdd(
+            _existingOutputChannels.Value.GetOrAdd(
                 channelName,
                 name => CreateOutputChannel(name));
 
@@ -42,11 +52,23 @@ namespace Hermes.Infrastructure.Connection {
         }
 
         public void Dispose() {
-            foreach (var channel in _existingChannels) {
+            ReleaseChannels(_existingDuplexChannels);
+            ReleaseChannels(_existingInputChannels);
+            ReleaseChannels(_existingOutputChannels);
+
+            _socket.Disconnect(reuseSocket: false);
+            _socket.Dispose();
+        }
+
+        private void ReleaseChannels<TChannel>(Lazy<ConcurrentDictionary<string, TChannel>> channels)
+            where TChannel : IChannel {
+            if (!channels.IsValueCreated) return;
+
+            foreach (var channel in channels.Value) {
                 channel.Value.Dispose();
             }
-            _existingChannels.Clear();
-            _socket.Disconnect(reuseSocket: true);
+
+            channels.Value.Clear();
         }
     }
 }

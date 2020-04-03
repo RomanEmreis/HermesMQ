@@ -24,15 +24,8 @@ namespace Hermes.Server {
         }
 
         static async Task StartHost(IMessageAdapter adapter, ILogger logger) {
-            var host = new DefaultHermesHost(logger);
+            var host = new DefaultHermesHost(adapter, logger);
             await host.StartListenAsync("127.0.0.1", 8087);
-
-            var dispatcher = new DefaultHermesMessageDispatcher(adapter, logger);
-            await dispatcher.DispatchAsync();
-
-            host.ClientConnected += newConnection => {
-                dispatcher.AddConnection(newConnection);
-            };
         }
     }
 }

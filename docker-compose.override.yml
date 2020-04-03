@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  hermes.messagequeue.service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8087
+      - DEPLOYMENT_PORT=${DEPLOYMENT_PORT}
+    ports:
+      - "8087:2525"

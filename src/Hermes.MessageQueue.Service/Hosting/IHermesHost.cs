@@ -1,14 +1,15 @@
-﻿using System.Threading.Tasks;
+﻿using Hermes.Abstractions;
+using System.Threading.Tasks;
 
-namespace Hermes.Abstractions {
+namespace Hermes.MessageQueue.Service.Hosting {
     public delegate void ClientConnected(IConnection hermesConnection);
 
-    public interface IHost {
+    public interface IHermesHost {
         event ClientConnected ClientConnected;
 
         bool IsHosted { get; }
 
-        ValueTask StartListenAsync(string hostAddress, int port);
+        Task StartListenAsync(int port);
 
         ValueTask StopListenAsync();
     }
