@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using System.Net.Sockets;
 
 namespace Hermes.Infrastructure.Connection {
-    public sealed class DefaultHermesConnection : IConnection {
+    public sealed class HermesConnection : IConnection {
         private readonly Lazy<ConcurrentDictionary<string, IDuplexChannel>> _existingDuplexChannels = 
             new Lazy<ConcurrentDictionary<string, IDuplexChannel>>(() => new ConcurrentDictionary<string, IDuplexChannel>(), true);
 
@@ -17,7 +17,7 @@ namespace Hermes.Infrastructure.Connection {
 
         private readonly Socket                                       _socket;
 
-        public DefaultHermesConnection(Socket socket) => _socket = socket;
+        public HermesConnection(Socket socket) => _socket = socket;
 
         public bool IsConnected => _socket.IsConnected();
 

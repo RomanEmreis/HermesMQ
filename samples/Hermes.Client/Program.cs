@@ -1,5 +1,6 @@
 ﻿using Hermes.Abstractions;
 using Hermes.Infrastructure.Connection;
+using Hermes.Infrastructure.Extensions;
 using Hermes.Infrastructure.Messaging;
 using Microsoft.Extensions.Logging;
 using System;
@@ -20,22 +21,26 @@ namespace Hermes.Client {
             });
 
             var logger = loggerFactory.CreateLogger("client");
-            var adapter = new DefaultMessageAdapter();
 
-            var connection = await CreateConsumer(adapter, logger);
-            await CreateProducer(adapter, logger);
+            var connection = await CreateConsumer(logger);
+            await CreateProducer(logger);
 
             connection.Dispose();
         }
 
-        public async static Task CreateProducer(IMessageAdapter adapter, ILogger logger) {
-            var connectionFactory = new DefaultHermesConnectionFactory(logger);
+        public async static Task CreateProducer(ILogger logger) {
+            var connectionFactory = new HermesConnectionFactory(logger);
 
             var connection = await connectionFactory.ConnectAsync("127.0.0.1", 8087);
-            var channel    = connection.GetOrCreateOutputChannel("client channel");
-            var producer   = new DefaultHermesProducer<Guid, Payload>(channel, adapter, logger);
+            var producer   = connection.GetProducer<Guid, Payload>("client channel");
+
+            producer.MessageSent += message => {
+                Console.WriteLine($"The Message (key: {message.Key}) has been sent to HermesMQ channel {message.ChannelName}");
+            };
 
             while (Console.ReadKey().Key != ConsoleKey.Escape) {
+                Console.Write("Write a message: ");
+
                 var payload = new Payload { Data = Console.ReadLine() };
                 await producer.ProduceAsync(Guid.NewGuid(), payload);
 
@@ -45,15 +50,15 @@ namespace Hermes.Client {
             connection.Dispose();
         }
 
-        public async static Task<IConnection> CreateConsumer(IMessageAdapter adapter, ILogger logger) {
-            var connectionFactory = new DefaultHermesConnectionFactory(logger);
+        public async static Task<IConnection> CreateConsumer(ILogger logger) {
+            var connectionFactory = new HermesConnectionFactory(logger);
 
             var connection = await connectionFactory.ConnectAsync("127.0.0.1", 8087);
-            var channel    = connection.GetOrCreateInputChannel("client channel");
-            var consumer   = new DefaultHermesConsumer<Guid, Payload>(channel, adapter, logger);
+            var consumer   = connection.GetConsumer<Guid, Payload>("client channel");
 
-            consumer.OnMessageReceived += (channel, message) => {
-                Console.WriteLine($"broadcasting message(key: {message.Key}) received {message.Value.Data}");
+            consumer.MessageReceived += (channel, message) => {
+                Console.WriteLine($"Received the message (key: {message.Key}) for {message.ChannelName}");
+                Console.WriteLine($"Message: {message.Value.Data}");
             };
 
             _ = consumer.ConsumeAsync();

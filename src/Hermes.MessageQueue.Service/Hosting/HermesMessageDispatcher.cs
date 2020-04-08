@@ -1,10 +1,10 @@
 ﻿using Hermes.Abstractions;
+using Hermes.Infrastructure.Messaging;
 using Hermes.MessageQueue.Service.Application.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace Hermes.MessageQueue.Service.Hosting {
@@ -34,23 +34,12 @@ namespace Hermes.MessageQueue.Service.Hosting {
 
         public Task StartDispatchingAsync(CancellationToken cancellationToken = default) =>
             Task.WhenAll(
-                MessagesListener.StartListen(WaitingForMessages, cancellationToken),
-                ConnectionsListener.StartListen(WaitingForDisconnect, cancellationToken));
+                MessagesListener.StartListen(OnMessageReceived, cancellationToken),
+                ConnectionsListener.StartListen(OnDisconnected, cancellationToken));
 
-        private async Task WaitingForMessages(ChannelReader<MessageContext> channelReader, CancellationToken cancellationToken) {
-            while (await channelReader.WaitToReadAsync(cancellationToken)) {
-                if (channelReader.TryRead(out var messageContext)) {
-                    OnMessageReceived(in messageContext);
-                }
-            }
-        }
-
-        private async Task WaitingForDisconnect(ChannelReader<Guid> channelReader, CancellationToken cancellationToken) {
-            while (await channelReader.WaitToReadAsync(cancellationToken)) {
-                if (channelReader.TryRead(out var connectionId)) {
-                    _ = _connections.TryRemove(connectionId, out var _);
-                }
-            }
+        private void OnDisconnected(in Guid connectionId) {
+            if (_connections.TryRemove(connectionId, out var _))
+                _logger.LogInformation("Connection with id {ConnectionId} has been disconnected", connectionId);
         }
 
         private void OnMessageReceived(in MessageContext messageContext) {

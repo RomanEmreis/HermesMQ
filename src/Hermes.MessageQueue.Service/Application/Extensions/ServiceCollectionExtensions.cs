@@ -1,4 +1,6 @@
-﻿using Hermes.MessageQueue.Service.Hosting;
+﻿using Hermes.Abstractions;
+using Hermes.Infrastructure.Messaging;
+using Hermes.MessageQueue.Service.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 

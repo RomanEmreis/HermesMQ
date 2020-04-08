@@ -47,7 +47,7 @@ namespace Hermes.MessageQueue.Service.Hosting {
                 TaskScheduler.Default
             );
 
-            _currentConnection = new DefaultHermesConnection(listenSocket);
+            _currentConnection = new HermesConnection(listenSocket);
         }
 
         private async Task WaitingForConnections(Socket listenSocket) {
@@ -64,7 +64,7 @@ namespace Hermes.MessageQueue.Service.Hosting {
 
         private async Task<IConnection> AcceptConnection(Socket listenSocket) {
             var newConnectionSocket = await listenSocket.AcceptAsync().ConfigureAwait(false);
-            return new DefaultHermesConnection(newConnectionSocket);
+            return new HermesConnection(newConnectionSocket);
         }
 
         public ValueTask StopListenAsync() {

@@ -6,12 +6,12 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace Hermes.Infrastructure.Connection {
-    public class DefaultHermesConnectionFactory : IConnectionFactory {
+    public class HermesConnectionFactory : IConnectionFactory {
         private readonly ILogger                                          _logger;
         private readonly ConcurrentDictionary<(int, string), IConnection> _existingConnections =
             new ConcurrentDictionary<(int, string), IConnection>();
 
-        public DefaultHermesConnectionFactory(ILogger logger) {
+        public HermesConnectionFactory(ILogger logger) {
             _logger = logger;
         }
 
@@ -40,7 +40,7 @@ namespace Hermes.Infrastructure.Connection {
             var clientSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             clientSocket.Connect(new IPEndPoint(ipAddress, port));
 
-            var connection = new DefaultHermesConnection(clientSocket);
+            var connection = new HermesConnection(clientSocket);
 
             return connection;
         }

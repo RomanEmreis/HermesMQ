@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Hermes.Infrastructure.Messaging {
-    public class DefaultMessageAdapter : IMessageAdapter {
+    public class JsonMessageAdapter : IMessageAdapter {
         private readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions { 
             WriteIndented = true, 
             IgnoreNullValues = true,
