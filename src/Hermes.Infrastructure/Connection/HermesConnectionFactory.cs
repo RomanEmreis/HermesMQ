@@ -44,5 +44,11 @@ namespace Hermes.Infrastructure.Connection {
 
             return connection;
         }
+
+        public void Dispose() {
+            foreach (var connection in _existingConnections) {
+                connection.Value.Dispose();
+            }
+        }
     }
 }

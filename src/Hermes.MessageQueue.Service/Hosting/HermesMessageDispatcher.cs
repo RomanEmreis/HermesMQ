@@ -1,5 +1,4 @@
 ﻿using Hermes.Abstractions;
-using Hermes.Infrastructure.Messaging;
 using Hermes.MessageQueue.Service.Application.Entities;
 using Microsoft.Extensions.Logging;
 using System;
@@ -26,7 +25,7 @@ namespace Hermes.MessageQueue.Service.Hosting {
             var context = new ConnectionContext(connection);
 
             if (_connections.TryAdd(context.Id, context)) {
-                _ = context.ConsumeAsync(this, cancellationToken);
+                _ = Task.Run(() => context.WaitForChannelCreated(this, cancellationToken));
             } else {
                 _logger.LogError("Unable to add connection with id {ConnectionId}", context.Id);
             }
@@ -43,12 +42,12 @@ namespace Hermes.MessageQueue.Service.Hosting {
         }
 
         private void OnMessageReceived(in MessageContext messageContext) {
-            _logger.LogInformation("Start broadcasting message to consumers of channel {Channel}", messageContext.Channel.Name);
+            _logger.LogInformation("Start broadcasting message to consumers of channel {Channel}", messageContext.ChannelName);
 
             foreach (var connection in _connections) {
                 _logger.LogInformation("Send message to connection");
 
-                _ = connection.Value.ProduceAsync(messageContext.MessageBytes);
+                _ = connection.Value.ProduceAsync(messageContext);
             }
         }
     }

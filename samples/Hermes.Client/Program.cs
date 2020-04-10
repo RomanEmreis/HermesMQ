@@ -32,7 +32,7 @@ namespace Hermes.Client {
             var connectionFactory = new HermesConnectionFactory(logger);
 
             var connection = await connectionFactory.ConnectAsync("127.0.0.1", 8087);
-            var producer   = connection.GetProducer<Guid, Payload>("client channel");
+            var producer   = connection.GetProducer<Guid, Payload>("client channel 1");
 
             producer.MessageSent += message => {
                 Console.WriteLine($"The Message (key: {message.Key}) has been sent to HermesMQ channel {message.ChannelName}");
@@ -54,7 +54,7 @@ namespace Hermes.Client {
             var connectionFactory = new HermesConnectionFactory(logger);
 
             var connection = await connectionFactory.ConnectAsync("127.0.0.1", 8087);
-            var consumer   = connection.GetConsumer<Guid, Payload>("client channel");
+            var consumer   = connection.GetConsumer<Guid, Payload>("client channel 1");
 
             consumer.MessageReceived += (channel, message) => {
                 Console.WriteLine($"Received the message (key: {message.Key}) for {message.ChannelName}");

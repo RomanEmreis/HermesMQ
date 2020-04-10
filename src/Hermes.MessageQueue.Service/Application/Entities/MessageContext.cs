@@ -1,14 +1,15 @@
-﻿using Hermes.Abstractions;
-
-namespace Hermes.MessageQueue.Service.Application.Entities {
+﻿namespace Hermes.MessageQueue.Service.Application.Entities {
     internal readonly struct MessageContext {
-        internal MessageContext(IChannel channel, byte[] messageBytes) {
-            Channel = channel;
+        internal MessageContext(string channelName, byte[] messageBytes) {
+            ChannelName  = channelName;
             MessageBytes = messageBytes;
         }
 
-        internal readonly IChannel Channel { get; }
+        internal readonly string ChannelName { get; }
 
         internal readonly byte[] MessageBytes { get; }
+
+        internal void Deconstruct(out string channelName, out byte[] messageBytes) =>
+            (channelName, messageBytes) = (ChannelName, MessageBytes);
     }
 }
