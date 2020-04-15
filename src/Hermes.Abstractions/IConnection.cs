@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 
 namespace Hermes.Abstractions {
     public interface IConnection : IDisposable {
+        Guid Id { get; }
+
         bool IsConnected { get; }
 
         IDuplexChannel AssociatedChannel { get; }

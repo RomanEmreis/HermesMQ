@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hermes.Infrastructure.Connection {
-    public sealed class DuplexHermesChannel : IDuplexChannel {
+    public sealed class DuplexHermesChannel : ChannelBase, IDuplexChannel {
         private readonly IChannelReader _inputChannel;
         private readonly IChannelWriter _outputChannel;
 
@@ -22,7 +22,9 @@ namespace Hermes.Infrastructure.Connection {
         public ValueTask WriteAsync(byte[] messageBytes, CancellationToken cancellationToken = default) =>
             _outputChannel.WriteAsync(messageBytes, cancellationToken);
 
-        public void Dispose() {
+        protected override void Dispose(bool disposing) {
+            if (!disposing) return;
+
             _inputChannel.Dispose();
             _outputChannel.Dispose();
         }

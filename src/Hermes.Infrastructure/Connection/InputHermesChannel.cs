@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hermes.Infrastructure.Connection {
-    public sealed class InputHermesChannel : IChannelReader {
+    public sealed class InputHermesChannel : ChannelBase, IChannelReader {
         private readonly NetworkStream _networkStream;
         private readonly PipeReader    _reader;
 
@@ -28,7 +28,9 @@ namespace Hermes.Infrastructure.Connection {
             }
         }
 
-        public void Dispose() {
+        protected override void Dispose(bool disposing) {
+            if (!disposing) return;
+
             _reader.CancelPendingRead();
             _reader.Complete();
             _networkStream.Dispose();

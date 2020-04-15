@@ -1,9 +1,9 @@
 ﻿using Hermes.Abstractions;
 using Hermes.Infrastructure.Connection;
 using Hermes.Infrastructure.Extensions;
-using Hermes.Infrastructure.Messaging;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Hermes.Client {
@@ -38,14 +38,28 @@ namespace Hermes.Client {
                 Console.WriteLine($"The Message (key: {message.Key}) has been sent to HermesMQ channel {message.ChannelName}");
             };
 
-            while (Console.ReadKey().Key != ConsoleKey.Escape) {
-                Console.Write("Write a message: ");
+            var sw = new Stopwatch();
 
-                var payload = new Payload { Data = Console.ReadLine() };
+            sw.Start();
+
+            for (var i = 0; i < 10000; i++) {
+                var payload = new Payload { Data = $"message {i}" };
                 await producer.ProduceAsync(Guid.NewGuid(), payload);
 
-                Console.WriteLine();
+                Console.WriteLine($"message {i} sent");
             }
+
+            //while (Console.ReadKey().Key != ConsoleKey.Escape) {
+            //    Console.Write("Write a message: ");
+
+            //    var payload = new Payload { Data = Console.ReadLine() };
+            //    await producer.ProduceAsync(Guid.NewGuid(), payload);
+
+            //    Console.WriteLine();
+            //}
+
+            sw.Stop();
+            Console.WriteLine($"{sw.ElapsedMilliseconds}");
 
             connection.Dispose();
         }
@@ -57,8 +71,9 @@ namespace Hermes.Client {
             var consumer   = connection.GetConsumer<Guid, Payload>("client channel 1");
 
             consumer.MessageReceived += (channel, message) => {
-                Console.WriteLine($"Received the message (key: {message.Key}) for {message.ChannelName}");
+                //Console.WriteLine($"Received the message (key: {message.Key}) for {message.ChannelName}");
                 Console.WriteLine($"Message: {message.Value.Data}");
+                //Console.WriteLine();
             };
 
             _ = consumer.ConsumeAsync();

@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hermes.Infrastructure.Connection {
-    public sealed class OutputHermesChannel : IChannelWriter {
+    public sealed class OutputHermesChannel : ChannelBase, IChannelWriter {
         private readonly NetworkStream _networkStream;
         private readonly PipeWriter    _writer;
 
@@ -28,7 +28,9 @@ namespace Hermes.Infrastructure.Connection {
             _ = await _writer.FlushAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public void Dispose() {
+        protected override void Dispose(bool disposing) {
+            if (!disposing) return;
+
             _writer.CancelPendingFlush();
             _writer.Complete();
             _networkStream.Dispose();
