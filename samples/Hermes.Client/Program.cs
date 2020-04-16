@@ -38,28 +38,13 @@ namespace Hermes.Client {
                 Console.WriteLine($"The Message (key: {message.Key}) has been sent to HermesMQ channel {message.ChannelName}");
             };
 
-            var sw = new Stopwatch();
-
-            sw.Start();
-
-            for (var i = 0; i < 10000; i++) {
+            var i = 0;
+            do {
                 var payload = new Payload { Data = $"message {i}" };
                 await producer.ProduceAsync(Guid.NewGuid(), payload);
 
-                Console.WriteLine($"message {i} sent");
-            }
-
-            //while (Console.ReadKey().Key != ConsoleKey.Escape) {
-            //    Console.Write("Write a message: ");
-
-            //    var payload = new Payload { Data = Console.ReadLine() };
-            //    await producer.ProduceAsync(Guid.NewGuid(), payload);
-
-            //    Console.WriteLine();
-            //}
-
-            sw.Stop();
-            Console.WriteLine($"{sw.ElapsedMilliseconds}");
+                Console.WriteLine($"message {i++} sent");
+            } while (Console.ReadKey().Key != ConsoleKey.Escape);
 
             connection.Dispose();
         }
@@ -71,9 +56,7 @@ namespace Hermes.Client {
             var consumer   = connection.GetConsumer<Guid, Payload>("client channel 1");
 
             consumer.MessageReceived += (channel, message) => {
-                //Console.WriteLine($"Received the message (key: {message.Key}) for {message.ChannelName}");
-                Console.WriteLine($"Message: {message.Value.Data}");
-                //Console.WriteLine();
+                Console.WriteLine($"message {message.Value.Data} received");
             };
 
             _ = consumer.ConsumeAsync();

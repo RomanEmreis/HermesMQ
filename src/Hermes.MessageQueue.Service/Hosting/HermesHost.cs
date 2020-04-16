@@ -31,7 +31,7 @@ namespace Hermes.MessageQueue.Service.Hosting {
 
         private void StartListenImpl(int port) {
             var listenSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            var endpoint = new IPEndPoint(IPAddress.Any, port);
+            var endpoint     = new IPEndPoint(IPAddress.Any, port);
 
             listenSocket.Bind(endpoint);
             listenSocket.Listen(_initialBacklog);
@@ -41,7 +41,7 @@ namespace Hermes.MessageQueue.Service.Hosting {
             IsHosted = true;
 
             _ = Task.Factory.StartNew(
-                () => WaitingForConnections(listenSocket),
+                () => AcceptConnections(listenSocket),
                 _cts.Token,
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default
@@ -50,9 +50,9 @@ namespace Hermes.MessageQueue.Service.Hosting {
             _currentConnection = new HermesConnection(listenSocket);
         }
 
-        private async Task WaitingForConnections(Socket listenSocket) {
+        private async Task AcceptConnections(Socket listenSocket) {
             while (!_cts.IsCancellationRequested) {
-                var newConnection = await AcceptConnection(listenSocket).ConfigureAwait(false);
+                var newConnection = await AcceptConnection(listenSocket);
 
                 _logger.LogInformation("New client connected");
                 
@@ -63,7 +63,7 @@ namespace Hermes.MessageQueue.Service.Hosting {
         }
 
         private async Task<IConnection> AcceptConnection(Socket listenSocket) {
-            var newConnectionSocket = await listenSocket.AcceptAsync().ConfigureAwait(false);
+            var newConnectionSocket = await listenSocket.AcceptAsync();
             return new HermesConnection(newConnectionSocket);
         }
 

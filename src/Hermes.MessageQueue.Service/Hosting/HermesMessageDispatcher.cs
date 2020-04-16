@@ -3,6 +3,7 @@ using Hermes.MessageQueue.Service.Application.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,7 +43,7 @@ namespace Hermes.MessageQueue.Service.Hosting {
         }
 
         private void OnMessageReceived(in MessageContext messageContext) {
-            _logger.LogInformation("Start broadcasting message to consumers of channel {Channel}", messageContext.ChannelName);
+            _logger.LogInformation("Start broadcasting message to consumers of channel {Channel}", messageContext.ToString());
 
             foreach (var connection in _connections) {
                 _logger.LogInformation("Send message to connection");

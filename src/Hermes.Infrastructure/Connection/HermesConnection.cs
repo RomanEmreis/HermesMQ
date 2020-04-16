@@ -41,8 +41,8 @@ namespace Hermes.Infrastructure.Connection {
 
         public async Task WaitForAssociations(CancellationToken cancellationToken = default) {
             var associator         = new ConnectionChannelAssociator(_socket);
-            var connectionIdentity = await associator.AcceptAccociation(cancellationToken);
-
+            var connectionIdentity = await associator.AcceptAccociation(cancellationToken).ConfigureAwait(false);
+            
             Id                     = connectionIdentity.ConnectionId;
             AssociatedChannel      = new DuplexHermesChannel(
                 connectionIdentity.ConnectionName,
@@ -55,8 +55,6 @@ namespace Hermes.Infrastructure.Connection {
 
                 _socket.Disconnect(reuseSocket: false);
                 _socket.Dispose();
-
-                _ = Interlocked.Exchange(ref _disposed, _true);
             }
         }
     }

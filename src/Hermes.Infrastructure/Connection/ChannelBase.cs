@@ -10,7 +10,6 @@ namespace Hermes.Infrastructure.Connection {
         private void DisposeImpl(bool disposing) {
             if (Interlocked.CompareExchange(ref _disposed, _true, _false) == _false) {
                 Dispose(disposing);
-                _ = Interlocked.Exchange(ref _disposed, _true);
             }
         }
 
