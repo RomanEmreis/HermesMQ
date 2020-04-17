@@ -5,43 +5,57 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hermes.MessageQueue.Service.Application.Entities {
-    internal sealed class ConnectionContext {
-        internal ConnectionContext(IConnection connection) {
-            Connection = connection;
-            Id         = Guid.NewGuid();
+    internal sealed class ConnectionContext : IConnectionContext {
+        private          bool                  _disposed;
+        private readonly IConnectionDispatcher _connectionDispatcher;
+
+        internal ConnectionContext(IConnectionDispatcher connectionDispatcher, IConnection connection) {
+            _connectionDispatcher = connectionDispatcher;
+            Connection            = connection;
         }
+
+        public Guid Id => Connection.Id;
 
         internal IConnection Connection { get; }
 
-        internal Guid Id { get; }
+        public async Task ProduceAsync(MessageContext messageContext) {
+            var channel = Connection.AssociatedChannel;
 
-        internal async Task WaitForChannelCreated(IDispatcher dispatcher, CancellationToken cancellationToken) {
-            await Connection.WaitForAssociations(cancellationToken);
-
-            _ = Task.Run(() => 
-                ConsumeAsync(dispatcher, cancellationToken),
-                cancellationToken);
-        }
-
-        internal async Task ProduceAsync(MessageContext messageContext) {
-            if (messageContext.CanBeProduced(Connection, out var messageBytes)) {
-                await Connection.AssociatedChannel.WriteAsync(messageBytes);
+            if (messageContext.CanBeProduced(channel.Name, out var messageBytes)) {
+                await channel.WriteAsync(messageBytes);
             }
         }
 
-        internal async Task ConsumeAsync(IDispatcher dispatcher, CancellationToken cancellationToken) {
+        internal async Task ConsumeAsync(IMessageDispatcher dispatcher, CancellationToken cancellationToken) {
             var channel       = Connection.AssociatedChannel;
-            var messageWriter = dispatcher.MessagesListener.Writer;
 
             while (!cancellationToken.IsCancellationRequested && Connection.IsConnected) {
                 var messageBytes = await channel.ReadAsync(cancellationToken);
                 var context      = new MessageContext(Connection.Id, channel.Name, messageBytes);
                 
-                await messageWriter.WriteAsync(context);
+                await dispatcher.DispatchAsync(context);
             }
 
-            Connection.Dispose();
-            await dispatcher.ConnectionsListener.Writer.WriteAsync(Id);
+            await DisposeAsync();
+        }
+
+        internal async Task WaitForChannelCreated(IMessageDispatcher dispatcher, CancellationToken cancellationToken) {
+            await Connection.WaitForAssociations(cancellationToken);
+
+            _ = Task.Run(() =>
+                ConsumeAsync(dispatcher, cancellationToken),
+                cancellationToken);
+        }
+
+        public ValueTask DisposeAsync() {
+            return _disposed 
+                ? new ValueTask()
+                : new ValueTask(DisposeImpl());
+
+            async Task DisposeImpl() {
+                Connection.Dispose();
+                await _connectionDispatcher.DispatchAsync(Connection.Id);
+            }
         }
     }
 }

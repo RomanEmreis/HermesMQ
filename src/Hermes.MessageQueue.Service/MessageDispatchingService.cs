@@ -9,19 +9,22 @@ using Microsoft.Extensions.Options;
 namespace Hermes.MessageQueue.Service {
     internal sealed class MessageDispatchingService : BackgroundService {
         private readonly IHermesHost                        _hermesHost;
+        private readonly IConnectionDispatcher              _connectionDispatcher;
         private readonly IMessageDispatcher                 _messageDispatcher;
         private readonly ILogger<MessageDispatchingService> _logger;
         private readonly HermesHostingSettings              _hostingSettings;
 
         public MessageDispatchingService(
             IHermesHost                        hermesHost,
+            IConnectionDispatcher              connectionDispatcher,
             IMessageDispatcher                 messageDispatcher,
             IOptions<HermesHostingSettings>    options,
             ILogger<MessageDispatchingService> logger) {
-            _hermesHost        = hermesHost;
-            _messageDispatcher = messageDispatcher;
-            _hostingSettings   = options.Value;
-            _logger            = logger;
+            _hermesHost           = hermesHost;
+            _connectionDispatcher = connectionDispatcher;
+            _messageDispatcher    = messageDispatcher;
+            _hostingSettings      = options.Value;
+            _logger               = logger;
         }
 
         public override async Task StartAsync(CancellationToken cancellationToken) {
@@ -40,7 +43,10 @@ namespace Hermes.MessageQueue.Service {
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
             _logger.LogInformation("All systems go!");
-            await _messageDispatcher.StartDispatchingAsync(stoppingToken);
+
+            await Task.WhenAll(
+                _connectionDispatcher.StartDispatchingAsync(stoppingToken),
+                _messageDispatcher.StartDispatchingAsync(stoppingToken));
         }
     }
 }

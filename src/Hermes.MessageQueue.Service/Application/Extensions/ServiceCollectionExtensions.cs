@@ -1,6 +1,4 @@
-﻿using Hermes.Abstractions;
-using Hermes.Infrastructure.Messaging;
-using Hermes.MessageQueue.Service.Hosting;
+﻿using Hermes.MessageQueue.Service.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -8,7 +6,9 @@ namespace Hermes.MessageQueue.Service.Application.Extensions {
     internal static class ServiceCollectionExtensions {
         internal static IServiceCollection AddHermesServices(this IServiceCollection services) =>
             services
+                .AddSingleton<IConnectionContextProvider, ConnectionContextProvider>()
                 .AddSingleton<IMessageDispatcher, HermesMessageDispatcher>()
+                .AddSingleton<IConnectionDispatcher, HermesConnectionDispatcher>()
                 .AddSingleton<IHermesHost, HermesHost>()
                 .AddHostedService<MessageDispatchingService>();
 

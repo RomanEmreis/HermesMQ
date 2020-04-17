@@ -10,15 +10,18 @@ namespace Hermes.MessageQueue.Service.Application.Entities {
 
         internal Listener() {
             _listenChannel = Channel.CreateUnbounded<T>();
+
+            Reader         = _listenChannel.Reader;
+            Writer         = _listenChannel.Writer;
         }
 
-        internal ChannelReader<T> Reader => _listenChannel.Reader;
+        internal ChannelReader<T> Reader { get; }
 
-        internal ChannelWriter<T> Writer => _listenChannel.Writer;
+        internal ChannelWriter<T> Writer { get; }
 
         internal Task StartListen(ActionRef<T> waitedDelegate, CancellationToken cancellationToken = default) =>
                 Task.Factory.StartNew(
-                () => WaitingFor(_listenChannel.Reader, waitedDelegate, cancellationToken),
+                () => WaitingFor(Reader, waitedDelegate, cancellationToken),
                 cancellationToken,
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default

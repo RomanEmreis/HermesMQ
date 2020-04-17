@@ -1,10 +1,10 @@
-﻿using Hermes.MessageQueue.Service.Application.Entities;
-using System;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace Hermes.MessageQueue.Service.Hosting {
-    internal interface IDispatcher {
-        Listener<Guid> ConnectionsListener { get; }
+    internal interface IDispatcher<T> {
+        ValueTask DispatchAsync(T entry);
 
-        Listener<MessageContext> MessagesListener { get; }
+        Task StartDispatchingAsync(CancellationToken cancellationToken = default);
     }
 }

@@ -12,11 +12,11 @@ namespace Hermes.MessageQueue.Service.Hosting {
         
         private readonly ILogger<HermesHost>     _logger;
         private          IConnection             _currentConnection;
-        private readonly IMessageDispatcher      _messageDispatcher;
+        private readonly IConnectionDispatcher      _messageDispatcher;
 
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
-        public HermesHost(IMessageDispatcher messageDispatcher, ILogger<HermesHost> logger) {
+        public HermesHost(IConnectionDispatcher messageDispatcher, ILogger<HermesHost> logger) {
             _logger  = logger;
             _messageDispatcher = messageDispatcher;
         }
@@ -53,10 +53,9 @@ namespace Hermes.MessageQueue.Service.Hosting {
         private async Task AcceptConnections(Socket listenSocket) {
             while (!_cts.IsCancellationRequested) {
                 var newConnection = await AcceptConnection(listenSocket);
-
                 _logger.LogInformation("New client connected");
                 
-                _messageDispatcher.AddConnection(newConnection);
+                await _messageDispatcher.AddConnectionAsync(newConnection, _cts.Token);
 
                 ClientConnected?.Invoke(newConnection);
             }
