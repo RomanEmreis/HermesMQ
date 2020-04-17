@@ -42,7 +42,8 @@ var producer = connection.GetProducer<Guid, string>("MyChannel");
 await producer.ProduceAsync(Guid.NewGuid(), "Hello World!");
 
 //MessageSent event
-producer.MessageSent += message => {
+producer.MessageSent += message =>
+{
   //handle when the message was sent
 };
 ```
@@ -53,7 +54,8 @@ var consumer = connection.GetConsumer<Guid, string>("MyChannel");
 //Starting the consuming "MyChannel" channel
 await consumer.ConsumeAsync();
 
-consumer.MessageReceived += (channel, message) => {
+consumer.MessageReceived += (channel, message) =>
+{
   //handle when the message received
 };
 ```
