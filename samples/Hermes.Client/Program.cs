@@ -3,7 +3,6 @@ using Hermes.Infrastructure.Connection;
 using Hermes.Infrastructure.Extensions;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Hermes.Client {
