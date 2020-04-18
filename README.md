@@ -1,5 +1,8 @@
 # HermesMQ
-Lightweight message broker
+Lightweight message broker on .NET Core
+
+### Status
+![.NET Core](https://github.com/RomanEmreis/HermesMQ/workflows/.NET%20Core/badge.svg)
 
 ## Client usage
 
