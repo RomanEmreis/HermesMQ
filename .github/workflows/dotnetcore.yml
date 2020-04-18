@@ -20,6 +20,6 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build Hermes.Server.sln --configuration Release --no-restore
+      run: dotnet build src/Hermes.MessageQueue.Service --configuration Release --no-restore
     - name: Test
-      run: dotnet test Hermes.Server.sln --no-restore --verbosity normal
+      run: dotnet test src/Hermes.MessageQueue.Service --no-restore --verbosity normal
