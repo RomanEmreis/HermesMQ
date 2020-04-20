@@ -12,11 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hermes.Infrastructure" Version="0.0.1-alpha" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Hermes.Infrastructure\Hermes.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
