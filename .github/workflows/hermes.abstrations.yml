@@ -1,6 +1,4 @@
 name: Hermes.Abstrations (.NET Core)
-env:
-  proj_folder: src/Hermes.Abstractions
 
 on:
   push:
@@ -10,7 +8,9 @@ on:
 
 jobs:
   build:
-
+    env:
+      proj_folder: src/Hermes.Abstractions
+     
     runs-on: ubuntu-latest
 
     steps:
