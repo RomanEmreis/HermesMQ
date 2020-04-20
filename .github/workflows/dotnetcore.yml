@@ -1,4 +1,4 @@
-name: .NET Core
+name: Hermes.MessageQueue.Service (.NET Core)
 
 on:
   push:
