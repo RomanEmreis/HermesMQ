@@ -2,7 +2,9 @@
 Lightweight message broker on .NET Core
 
 ### Status
-![.NET Core](https://github.com/RomanEmreis/HermesMQ/workflows/.NET%20Core/badge.svg?branch=master)
+![Hermes.Abstrations (.NET Core)](https://github.com/RomanEmreis/HermesMQ/workflows/Hermes.Abstrations%20(.NET%20Core)/badge.svg?branch=master)
+![Hermes.Infrastructure (.NET Core)](https://github.com/RomanEmreis/HermesMQ/workflows/Hermes.Infrastructure%20(.NET%20Core)/badge.svg?branch=master)
+![Hermes.MessageQueue.Service (.NET Core)](https://github.com/RomanEmreis/HermesMQ/workflows/Hermes.MessageQueue.Service%20(.NET%20Core)/badge.svg?branch=master)
 
 ## Client usage
 
