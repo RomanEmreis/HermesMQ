@@ -20,6 +20,6 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Install dependencies
-      run: dotnet {{proj_folder}} restore
+      run: dotnet restore {{proj_folder}}
     - name: Build
-      run: dotnet {{proj_folder}} build --configuration Release --no-restore
+      run: dotnet build {{proj_folder}} --configuration Release --no-restore
