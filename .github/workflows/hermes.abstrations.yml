@@ -8,8 +8,6 @@ on:
 
 jobs:
   build:
-    env:
-      proj_folder: src/Hermes.Abstractions
      
     runs-on: ubuntu-latest
 
@@ -20,6 +18,6 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Install dependencies
-      run: dotnet restore ${{proj_folder}}
+      run: dotnet restore src/Hermes.Abstractions
     - name: Build
-      run: dotnet build ${{proj_folder}} --configuration Release --no-restore
+      run: dotnet build src/Hermes.Abstractions --configuration Release --no-restore
