@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Hermes.Infrastructure.Connection {
@@ -18,22 +19,36 @@ namespace Hermes.Infrastructure.Connection {
         public ValueTask<IConnection> ConnectAsync(string hostAddress, int port) =>
             _existingConnections.TryGetValue((port, hostAddress), out var existingConnection)
                 ? new ValueTask<IConnection>(existingConnection)
-                : new ValueTask<IConnection>(ConnectImpl(hostAddress, port));
+                : ConnectImplAsync(hostAddress, port);
 
-        private IConnection ConnectImpl(string hostAddress, int port) {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private ValueTask<IConnection> ConnectImplAsync(string hostAddress, int port) {
             _logger.LogInformation("Connection to {Host}:{Port}", hostAddress, port);
 
-            if (IPAddress.TryParse(hostAddress, out var ipAddress)) {
-                var newConnection = _existingConnections.GetOrAdd(
-                    (port, hostAddress),
-                    hostData => CreateConnection(ipAddress, port));
+            return IPAddress.TryParse(hostAddress, out var ipAddress)
+                ? new ValueTask<IConnection>(ConnectImpl(ipAddress, hostAddress, port))
+                : new ValueTask<IConnection>(ConnectToHostNameAsync(hostAddress, port));
+        }
 
-                return newConnection;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private async Task<IConnection> ConnectToHostNameAsync(string hostName, int port) {
+            var addresses = await Dns.GetHostAddressesAsync(hostName);
+            if (addresses.Length == 0) {
+                _logger.LogError("Invalid host {Host}:{Port}", hostName, port);
+
+                return default;
             }
 
-            _logger.LogError("Invalid host address {Host}:{Port}", hostAddress, port);
+            return ConnectImpl(addresses[0], hostName, port);
+        }
 
-            return null;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private IConnection ConnectImpl(IPAddress ipAddress, string hostAddress, int port) {
+            var newConnection = _existingConnections.GetOrAdd(
+                (port, hostAddress),
+                hostData => CreateConnection(ipAddress, port));
+
+            return newConnection;
         }
 
         private static IConnection CreateConnection(IPAddress ipAddress, int port) {

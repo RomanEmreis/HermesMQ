@@ -24,7 +24,7 @@ namespace Hermes.Infrastructure.Tests {
             var isRaised = false;
             _producer.MessageSent += OnMessageSent;
 
-            await _producer.ProduceAsync(0, 0);
+            await _producer.ProduceAsync(new Message<int, int>(0, 0));
 
             _producer.MessageSent -= OnMessageSent;
 
@@ -35,14 +35,15 @@ namespace Hermes.Infrastructure.Tests {
 
         [Fact]
         public async Task ProduceAsync_MessageAdapter_AdaptAsync_Should_Be_Called_Once() {
-            await _producer.ProduceAsync(0, 0);
+            var message = new Message<int, int>(0, 0);
+            await _producer.ProduceAsync(message);
 
-            _adapterMock.Verify(a => a.AdaptAsync<Message<int, int>>(It.IsAny<Message<int, int>>()), Times.Once);
+            _adapterMock.Verify(a => a.AdaptAsync(It.IsAny<IMessage<int, int>>()), Times.Once);
         }
 
         [Fact]
         public async Task ProduceAsync_ChannelWriter_WriteAsync_Should_Be_Called_Once() {
-            await _producer.ProduceAsync(0, 0);
+            await _producer.ProduceAsync(new Message<int, int>(0, 0));
 
             _writerMock.Verify(w => w.WriteAsync(It.IsAny<byte[]>(), It.IsAny<CancellationToken>()), Times.Once);
         }

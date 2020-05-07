@@ -1,5 +1,4 @@
-﻿using Hermes.Abstractions;
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 
 namespace Hermes.MessageQueue.Service.Application.Entities {

@@ -6,13 +6,15 @@ namespace Hermes.Abstractions {
         public Message() {
         }
 
-        public Message(string channelName, TKey key, TValue value) {
+        public Message(TKey key, TValue value) {
             CreateDate = DateTime.Now;
-            ChannelName = channelName;
-            Key = key;
-            Value = value;
-            Headers = new Dictionary<string, string>();
+            Key        = key;
+            Value      = value;
+            Headers    = new Dictionary<string, string>();
         }
+
+        public Message(string channelName, TKey key, TValue value) : this(key, value) => 
+            ChannelName = channelName;
 
         public string ChannelName { get; set; }
 

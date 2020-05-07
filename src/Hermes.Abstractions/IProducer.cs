@@ -6,7 +6,7 @@ namespace Hermes.Abstractions {
 
     public interface IProducer<TKey, TValue> {
         event MessageSent<TKey, TValue> MessageSent;
-
-        Task ProduceAsync(TKey key, TValue value, CancellationToken cancellationToken = default);
+                
+        Task ProduceAsync(IMessage<TKey, TValue> message, CancellationToken cancellationToken = default);
     }
 }

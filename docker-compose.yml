@@ -1,8 +1,24 @@
 version: '3.4'
 
 services:
+  hermes.webapi.client:
+    image: ${DOCKER_REGISTRY-}hermes_webapi_client
+    build:
+      context: ./samples/Hermes.WebApi.Client
+      dockerfile: Dockerfile
+    depends_on:
+      - hermes.messagequeue.service
+
+  hermes.worker.client:
+    image: ${DOCKER_REGISTRY-}hermes_worker_client
+    build:
+      context: ./samples/Hermes.Worker.Client
+      dockerfile: Dockerfile
+    depends_on:
+      - hermes.messagequeue.service
+
   hermes.messagequeue.service:
-    image: ${DOCKER_REGISTRY-}hermesmessagequeueservice
+    image: ${DOCKER_REGISTRY-}hermes_message_queue_service
     build:
       context: ./src/Hermes.MessageQueue.Service
       dockerfile: Dockerfile

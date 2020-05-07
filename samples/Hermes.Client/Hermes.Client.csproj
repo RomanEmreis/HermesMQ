@@ -7,11 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HermesMQ.Client" Version="0.0.4-alpha" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\HermesMQ\HermesMQ.csproj" />
   </ItemGroup>
 
 </Project>

@@ -40,7 +40,7 @@ namespace Hermes.Client {
             var i = 0;
             do {
                 var payload = new Payload { Data = $"message {i}" };
-                await producer.ProduceAsync(Guid.NewGuid(), payload);
+                var message = await producer.ProduceAsync(Guid.NewGuid(), payload);
 
                 Console.WriteLine($"message {i++} sent");
             } while (Console.ReadKey().Key != ConsoleKey.Escape);

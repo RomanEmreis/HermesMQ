@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>0.0.1-alpha</Version>
+    <Version>0.0.3-alpha</Version>
     <Authors>Roman Emreis</Authors>
     <Description>Abstractions for implementing HermesMQ client and server</Description>
     <PackageProjectUrl>https://github.com/RomanEmreis/HermesMQ</PackageProjectUrl>

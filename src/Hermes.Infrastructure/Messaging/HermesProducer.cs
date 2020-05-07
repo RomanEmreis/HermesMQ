@@ -16,13 +16,14 @@ namespace Hermes.Infrastructure.Messaging {
 
         public event MessageSent<TKey, TValue> MessageSent;
 
-        public async Task ProduceAsync(TKey key, TValue value, CancellationToken cancellationToken = default) {
-            var message = new Message<TKey, TValue>(_channelWriter.Name, key, value);
+        public async Task ProduceAsync(IMessage<TKey, TValue> message, CancellationToken cancellationToken = default) {
+            if (string.IsNullOrEmpty(message.ChannelName))
+                message.ChannelName = _channelWriter.Name;
 
             var messageBytes = await _messageAdapter.AdaptAsync(message).ConfigureAwait(false);
             await _channelWriter.WriteAsync(messageBytes, cancellationToken).ConfigureAwait(false);
 
             MessageSent?.Invoke(message);
         }
-	}
+    }
 }

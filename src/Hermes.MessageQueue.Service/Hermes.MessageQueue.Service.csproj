@@ -5,6 +5,7 @@
     <UserSecretsId>dotnet-Hermes.MessageQueue.Service-E420BDC7-1257-49B1-9D9C-DCCDC176E4FF</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -12,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Hermes.Infrastructure" Version="0.0.1-alpha" />
+    <PackageReference Include="Hermes.Infrastructure" Version="0.0.4-alpha" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
   </ItemGroup>
