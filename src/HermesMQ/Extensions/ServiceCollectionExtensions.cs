@@ -11,5 +11,12 @@ namespace HermesMQ.Extensions {
                 .AddSingleton<IConnectionFactory, HermesConnectionFactory>()
                 .AddScoped<IMessageAdapter, JsonMessageAdapter>()
                 .Configure<HermesSettings>(configuration.GetSection(nameof(HermesSettings)));
+
+        public static IServiceCollection AddHermes<TOptions>(this IServiceCollection services, IConfiguration configuration, string configurationSectionName = nameof(HermesSettings))
+            where TOptions : HermesSettings =>
+            services
+                .AddSingleton<IConnectionFactory, HermesConnectionFactory>()
+                .AddScoped<IMessageAdapter, JsonMessageAdapter>()
+                .Configure<TOptions>(configuration.GetSection(configurationSectionName));
     }
 }
