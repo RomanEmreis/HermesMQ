@@ -1,4 +1,4 @@
-using HermesMQ;
+using Hermes.Worker.Client.Application;
 using HermesMQ.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,7 +30,7 @@ namespace Hermes.Worker.Client {
 
                     services
                         .AddSingleton(logger)
-                        .AddHermes(configuration)
+                        .AddHermes<MessageQueueSettings>(configuration)
                         .AddHostedService<HermesWorker>();
                 });
     }

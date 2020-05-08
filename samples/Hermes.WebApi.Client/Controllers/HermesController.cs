@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Hermes.Abstractions;
 using Hermes.Infrastructure.Extensions;
+using Hermes.WebApi.Client.Application;
 using Hermes.WebApi.Client.Models;
-using HermesMQ;
 using HermesMQ.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,13 +15,13 @@ namespace Hermes.WebApi.Client.Controllers {
     public class HermesController : ControllerBase {
         private readonly IConnectionFactory        _connectionFactory;
         private readonly IMessageAdapter           _messageAdapter;
-        private readonly HermesSettings            _settings;
+        private readonly MessageQueueSettings      _settings;
         private readonly ILogger<HermesController> _logger;
 
         public HermesController(
             IConnectionFactory        connectionFactory,
             IMessageAdapter           messageAdapter,
-            IOptions<HermesSettings>  options,
+            IOptions<MessageQueueSettings>  options,
             ILogger<HermesController> logger) {
             _connectionFactory     = connectionFactory;
             _messageAdapter        = messageAdapter;
@@ -32,7 +32,7 @@ namespace Hermes.WebApi.Client.Controllers {
         [HttpPost("{payloadData}")]
         public async Task<IActionResult> Get(string payloadData) {
             var connection  = await _connectionFactory.ConnectAsync(_settings);
-            var producer    = connection.GetProducer<Guid, Payload>("client channel 1", _messageAdapter);
+            var producer    = connection.GetProducer<Guid, Payload>(_settings.ChannelName, _messageAdapter);
 
             var message     = await producer.ProduceAsync(Guid.NewGuid(), new Payload { Data = payloadData });
 

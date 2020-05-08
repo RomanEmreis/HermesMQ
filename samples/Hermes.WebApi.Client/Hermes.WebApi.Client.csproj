@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HermesMQ.Client" Version="0.0.4-alpha" />
+    <PackageReference Include="HermesMQ.Client" Version="0.0.6-alpha" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
   </ItemGroup>
 

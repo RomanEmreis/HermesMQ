@@ -7,10 +7,13 @@ namespace Hermes.MessageQueue.Service.Application.Entities {
         private readonly byte[] _messageBytes;
 
         internal MessageContext(Guid id, string channelName, byte[] messageBytes) {
+            MessageId          = Guid.NewGuid();
             SenderConnectionId = id;
             _channelName       = channelName;
             _messageBytes      = messageBytes;
         }
+
+        internal readonly Guid MessageId { get; }
 
         internal readonly Guid SenderConnectionId { get; }
 

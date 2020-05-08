@@ -1,5 +1,6 @@
 ﻿using Hermes.Abstractions;
 using Hermes.MessageQueue.Service.Application.Entities;
+using Hermes.MessageQueue.Storage;
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -7,17 +8,21 @@ using System.Threading.Tasks;
 
 namespace Hermes.MessageQueue.Service.Hosting {
     internal sealed class HermesConnectionDispatcher : IConnectionDispatcher {
-        private readonly IConnectionContextProvider                    _connectionContextProvider;
-        private readonly IMessageDispatcher                            _messageDispatcher;
-        private readonly Listener<Guid>                                _listener;
+        private readonly IConnectionContextProvider _connectionContextProvider;
+        private readonly IMessageDispatcher         _messageDispatcher;
+        private readonly Listener<Guid>             _listener;
 
         public HermesConnectionDispatcher(
-            IConnectionContextProvider          connectionContextProvider,
-            IMessageDispatcher                  messageDispatcher) {
+            IConnectionContextProvider connectionContextProvider,
+            IMessageDispatcher         messageDispatcher,
+            IStorageManager            storageManager) {
             _connectionContextProvider = connectionContextProvider;
             _messageDispatcher         = messageDispatcher;
             _listener                  = new Listener<Guid>();
+            StorageManager             = storageManager;
         }
+
+        public IStorageManager StorageManager { get; }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ValueTask DispatchAsync(Guid entry) => _listener.Writer.WriteAsync(entry);

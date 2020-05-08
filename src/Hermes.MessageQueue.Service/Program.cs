@@ -1,4 +1,5 @@
 using Hermes.MessageQueue.Service.Application.Extensions;
+using Hermes.MessageQueue.Storage.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace Hermes.MessageQueue.Service {
@@ -13,6 +14,7 @@ namespace Hermes.MessageQueue.Service {
                 .ConfigureServices((hostContext, services) => {
                     services
                         .AddHermesServices()
+                        .AddInMemoryStorage()
                         .ConfigureHermesHosting();
                 });
     }

@@ -1,3 +1,4 @@
+using Hermes.WebApi.Client.Application;
 using HermesMQ.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,7 +29,7 @@ namespace Hermes.WebApi.Client {
 
             services
                 .AddSingleton(logger)
-                .AddHermes(Configuration)
+                .AddHermes<MessageQueueSettings>(Configuration, nameof(MessageQueueSettings))
                 .AddControllers();
         }
 
