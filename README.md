@@ -52,7 +52,7 @@ using HermesMQ.Extensions;
 var connection = await _connectionFactory.ConnectAsync(_hermesOptions.Value);
 
 //using host and port directly
-var connection = await _connectionFactory.ConnectAsync("127.0.0.1", 8087);
+var connection = await _connectionFactory.ConnectAsync("localhost", 8087);
 ```
 To create the producer of specific channel:
 ```csharp
